@@ -135,6 +135,40 @@ if ($result.Status -eq 'Disabled') { throw 'Windows did not enable the selected 
     }
 }
 
+#[tauri::command]
+fn open_author_page() -> Result<(), String> {
+    #[cfg(not(windows))]
+    return Err("This link is available on Windows only.".to_owned());
+
+    #[cfg(windows)]
+    {
+        use std::{ffi::OsStr, iter::once, os::windows::ffi::OsStrExt};
+        use windows_sys::Win32::UI::Shell::ShellExecuteW;
+        use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
+
+        let verb: Vec<u16> = OsStr::new("open").encode_wide().chain(once(0)).collect();
+        let url: Vec<u16> = OsStr::new("https://github.com/ali-farhad")
+            .encode_wide()
+            .chain(once(0))
+            .collect();
+        let result = unsafe {
+            ShellExecuteW(
+                std::ptr::null_mut(),
+                verb.as_ptr(),
+                url.as_ptr(),
+                std::ptr::null(),
+                std::ptr::null(),
+                SW_SHOWNORMAL,
+            )
+        };
+        if result as isize > 32 {
+            Ok(())
+        } else {
+            Err("Windows could not open the GitHub profile.".to_owned())
+        }
+    }
+}
+
 #[cfg(windows)]
 fn relaunch_elevated_if_needed() -> bool {
     use std::{ffi::OsStr, iter::once, os::windows::ffi::OsStrExt};
@@ -165,7 +199,11 @@ pub fn run() {
     if relaunch_elevated_if_needed() { return; }
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![list_ethernet_adapters, switch_adapter])
+        .invoke_handler(tauri::generate_handler![
+            list_ethernet_adapters,
+            switch_adapter,
+            open_author_page
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

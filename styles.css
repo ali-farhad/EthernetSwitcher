@@ -76,6 +76,8 @@ main { width: min(1120px, calc(100% - 56px)); margin: 0 auto; padding-top: 34px;
 .switch-button { min-width: 90px; height: 38px; padding: 0 16px; border: 1px solid rgba(108, 242, 191, .25); border-radius: 7px; display: flex; justify-content: center; align-items: center; color: var(--mint); background: transparent; font-size: 11px; font-weight: 700; cursor: pointer; transition: .15s; }
 .switch-button:hover { color: #07110f; background: var(--mint); box-shadow: 0 8px 25px rgba(67, 221, 164, .18); }
 .switch-button.current { border-color: transparent; color: #60746e; background: transparent; cursor: default; }
+.switch-button.switching { gap: 8px; color: var(--mint); background: rgba(108, 242, 191, .06); cursor: wait; }
+.button-spinner { width: 13px; height: 13px; border: 2px solid rgba(108, 242, 191, .25); border-top-color: var(--mint); border-radius: 50%; animation: spin .7s linear infinite; }
 
 .alert { margin: 16px 26px 0; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-radius: 7px; font-size: 11px; }
 .alert > span { width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; }
@@ -92,7 +94,10 @@ main { width: min(1120px, calc(100% - 56px)); margin: 0 auto; padding-top: 34px;
 .empty-icon { width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; color: var(--mint); font-size: 22px; }
 .loader { width: 32px; height: 32px; border: 2px solid rgba(108, 242, 191, .12); border-top-color: var(--mint); border-radius: 50%; animation: spin .8s linear infinite; }
 
-footer { height: 66px; padding: 0 5px; display: flex; align-items: center; justify-content: space-between; color: #4f655e; font-size: 9px; letter-spacing: .5px; text-transform: uppercase; }
+footer { height: 66px; display: flex; align-items: center; justify-content: center; gap: 4px; color: #60756e; font-size: 11px; }
+footer a { color: #91a6a0; font-weight: 600; text-decoration: none; transition: color .15s; }
+footer a:hover { color: var(--mint); }
+.footer-heart { margin: 0 2px; font-size: 12px; }
 @media (max-width: 760px) {
   .topbar { padding: 0 24px; }
   main { width: calc(100% - 28px); }

@@ -6,6 +6,7 @@
     query: "",
     loading: true,
     switching: false,
+    switchingGuid: null,
   };
 
   const icon = (paths, className = "") =>
@@ -47,7 +48,7 @@
           <div id="messages"></div>
           <div id="adapter-list" class="adapter-list" aria-live="polite"></div>
         </section>
-        <footer><span>A local Windows utility</span><span>No network data leaves this device</span></footer>
+        <footer>Made with <span class="footer-heart" aria-label="love">&#x1F496;</span> by <a id="author-link" href="https://github.com/ali-farhad">alifarhad</a></footer>
       </main>
       `;
     document.body.appendChild(shell);
@@ -57,6 +58,14 @@
       renderAdapters();
     });
     document.getElementById("refresh-button").addEventListener("click", reloadAdapters);
+    document.getElementById("author-link").addEventListener("click", async (event) => {
+      event.preventDefault();
+      try {
+        await window.__TAURI__.core.invoke("open_author_page");
+      } catch (error) {
+        showMessage("error", "Couldn't open link", errorText(error));
+      }
+    });
   }
 
   function showMessage(kind, title, message) {
@@ -134,8 +143,10 @@
     for (const adapter of visible) {
       const isActive = adapter.status.toLowerCase() === "up";
       const isExclusive = isActive && activeCount === 1;
+      const isSwitching = state.switchingGuid === adapter.guid;
       const card = document.createElement("article");
       card.className = `adapter-card${isActive ? " active" : ""}`;
+      card.setAttribute("aria-busy", isSwitching ? "true" : "false");
 
       const adapterIcon = document.createElement("div");
       adapterIcon.className = "adapter-icon";
@@ -166,9 +177,16 @@
       content.append(titleRow, description, details);
 
       const button = document.createElement("button");
-      button.className = `switch-button${isExclusive ? " current" : ""}`;
+      button.className = `switch-button${isExclusive ? " current" : ""}${isSwitching ? " switching" : ""}`;
       button.disabled = isExclusive || state.switching;
-      button.textContent = isExclusive ? "Active" : isActive ? "Use only" : "Switch";
+      if (isSwitching) {
+        const spinner = document.createElement("span");
+        spinner.className = "button-spinner";
+        spinner.setAttribute("aria-hidden", "true");
+        button.append(spinner, document.createTextNode("Switching..."));
+      } else {
+        button.textContent = isExclusive ? "Active" : isActive ? "Use only" : "Switch";
+      }
       button.addEventListener("click", () => switchAdapter(adapter));
       card.append(adapterIcon, content, button);
       list.appendChild(card);
@@ -205,6 +223,7 @@
 
   async function switchAdapter(adapter) {
     state.switching = true;
+    state.switchingGuid = adapter.guid;
     document.getElementById("messages").replaceChildren();
     renderAdapters();
     try {
@@ -215,6 +234,7 @@
       showMessage("error", "Couldn't switch connection", errorText(error));
     } finally {
       state.switching = false;
+      state.switchingGuid = null;
       renderAdapters();
     }
   }
