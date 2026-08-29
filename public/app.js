@@ -31,17 +31,9 @@
         <div class="system-state"><span class="pulse"></span><span id="network-state">Checking network</span></div>
       </header>
       <main>
-        <section class="hero">
-          <div>
-            <p class="eyebrow">WINDOWS NETWORK CONTROL</p>
-            <h1>Your wired networks,<br><em>one click away.</em></h1>
-            <p class="intro">Choose a physical Ethernet adapter. Windows will enable it and safely disable the others.</p>
-          </div>
-          <div class="hero-stat"><span id="adapter-count">0</span><p>ADAPTERS<br>FOUND</p></div>
-        </section>
         <section class="control-panel">
           <div class="panel-heading">
-            <div><h2>Available connections</h2><p>Physical Ethernet adapters detected by Windows</p></div>
+            <div><h2>Ethernet adapters</h2><p id="adapter-summary">Checking Windows...</p></div>
             <div class="tools">
               <label class="search">
                 ${icon('<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>')}
@@ -57,7 +49,7 @@
         </section>
         <footer><span>A local Windows utility</span><span>No network data leaves this device</span></footer>
       </main>
-      <div id="modal-root"></div>`;
+      `;
     document.body.appendChild(shell);
 
     document.getElementById("adapter-search").addEventListener("input", (event) => {
@@ -177,15 +169,15 @@
       button.className = `switch-button${isExclusive ? " current" : ""}`;
       button.disabled = isExclusive || state.switching;
       button.textContent = isExclusive ? "Active" : isActive ? "Use only" : "Switch";
-      if (!isExclusive) button.appendChild(document.createTextNode("  ->"));
-      button.addEventListener("click", () => openConfirmation(adapter));
+      button.addEventListener("click", () => switchAdapter(adapter));
       card.append(adapterIcon, content, button);
       list.appendChild(card);
     }
   }
 
   function updateSummary() {
-    document.getElementById("adapter-count").textContent = String(state.adapters.length);
+    const count = state.adapters.length;
+    document.getElementById("adapter-summary").textContent = `${count} physical adapter${count === 1 ? "" : "s"} detected`;
     const online = state.adapters.some((adapter) => adapter.status.toLowerCase() === "up");
     document.getElementById("network-state").textContent = online ? "Network online" : "No active link";
   }
@@ -211,42 +203,20 @@
     }
   }
 
-  function openConfirmation(adapter) {
-    const root = document.getElementById("modal-root");
-    const backdrop = document.createElement("div");
-    backdrop.className = "modal-backdrop";
-    backdrop.innerHTML = `
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-        <div class="modal-icon">-&gt;</div>
-        <p class="eyebrow">CONFIRM SWITCH</p>
-        <h2 id="confirm-title"></h2>
-        <p>This enables the selected adapter and disables all other physical Ethernet adapters. Your connection may pause briefly.</p>
-        <div class="modal-actions"><button class="secondary">Cancel</button><button class="primary">Switch connection</button></div>
-      </div>`;
-    backdrop.querySelector("h2").textContent = `Use ${adapter.name}?`;
-    const cancel = backdrop.querySelector(".secondary");
-    const confirm = backdrop.querySelector(".primary");
-    cancel.addEventListener("click", () => root.replaceChildren());
-    confirm.addEventListener("click", async () => {
-      state.switching = true;
-      cancel.disabled = true;
-      confirm.disabled = true;
-      confirm.textContent = "Switching...";
+  async function switchAdapter(adapter) {
+    state.switching = true;
+    document.getElementById("messages").replaceChildren();
+    renderAdapters();
+    try {
+      await window.__TAURI__.core.invoke("switch_adapter", { adapterGuid: adapter.guid });
+      await reloadAdapters();
+      showMessage("success", "Connection switched", `${adapter.name} is now active.`);
+    } catch (error) {
+      showMessage("error", "Couldn't switch connection", errorText(error));
+    } finally {
+      state.switching = false;
       renderAdapters();
-      try {
-        await window.__TAURI__.core.invoke("switch_adapter", { adapterGuid: adapter.guid });
-        root.replaceChildren();
-        await reloadAdapters();
-        showMessage("success", "Connection switched", `${adapter.name} is now the preferred wired connection.`);
-      } catch (error) {
-        root.replaceChildren();
-        showMessage("error", "Couldn't switch connection", errorText(error));
-      } finally {
-        state.switching = false;
-        renderAdapters();
-      }
-    });
-    root.appendChild(backdrop);
+    }
   }
 
   try {

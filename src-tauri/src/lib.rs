@@ -6,6 +6,15 @@ use std::os::windows::process::CommandExt;
 
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
+fn concise_error(stderr: &[u8], fallback: &str) -> String {
+    String::from_utf8_lossy(stderr)
+        .lines()
+        .map(str::trim)
+        .find(|line| !line.is_empty())
+        .unwrap_or(fallback)
+        .to_owned()
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct EthernetAdapter {
@@ -30,7 +39,10 @@ fn powershell(script: &str) -> Result<String, String> {
         .map_err(|error| format!("Could not start Windows PowerShell: {error}"))?;
 
     if !output.status.success() {
-        let detail = String::from_utf8_lossy(&output.stderr).trim().to_owned();
+        let detail = concise_error(
+            &output.stderr,
+            "Windows could not complete the network operation.",
+        );
         return Err(if detail.is_empty() {
             "Windows could not complete the network operation. Try running the app as administrator."
                 .to_owned()
@@ -96,13 +108,13 @@ fn switch_adapter(adapter_guid: String) -> Result<(), String> {
 $ErrorActionPreference = 'Stop'
 $targetGuid = [Guid]::Parse($env:ETHERNET_SWITCHER_TARGET)
 $ethernet = @(Get-NetAdapter -Physical | Where-Object { $_.InterfaceType -eq 6 })
-$target = $ethernet | Where-Object { $_.InterfaceGuid -eq $targetGuid } | Select-Object -First 1
+$target = $ethernet | Where-Object { [Guid]$_.InterfaceGuid -eq $targetGuid } | Select-Object -First 1
 if (-not $target) { throw 'The selected Ethernet adapter is no longer available.' }
 if ($target.Status -eq 'Disabled') { $target | Enable-NetAdapter -Confirm:$false }
-$ethernet | Where-Object { $_.InterfaceGuid -ne $targetGuid -and $_.Status -ne 'Disabled' } |
+$ethernet | Where-Object { [Guid]$_.InterfaceGuid -ne $targetGuid -and $_.Status -ne 'Disabled' } |
   Disable-NetAdapter -Confirm:$false
 Start-Sleep -Milliseconds 350
-$result = Get-NetAdapter -Physical | Where-Object { $_.InterfaceGuid -eq $targetGuid } | Select-Object -First 1
+$result = Get-NetAdapter -Physical | Where-Object { [Guid]$_.InterfaceGuid -eq $targetGuid } | Select-Object -First 1
 if ($result.Status -eq 'Disabled') { throw 'Windows did not enable the selected adapter.' }
 "#;
 
@@ -115,12 +127,10 @@ if ($result.Status -eq 'Disabled') { throw 'Windows did not enable the selected 
         if output.status.success() {
             Ok(())
         } else {
-            let detail = String::from_utf8_lossy(&output.stderr).trim().to_owned();
-            Err(if detail.is_empty() {
-                "Windows rejected the switch. Administrator access is required.".to_owned()
-            } else {
-                detail
-            })
+            Err(concise_error(
+                &output.stderr,
+                "Windows rejected the switch. Administrator access is required.",
+            ))
         }
     }
 }

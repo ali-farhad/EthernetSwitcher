@@ -37,17 +37,8 @@ button { color: inherit; }
 .system-state { display: flex; align-items: center; gap: 9px; color: #a9bbb6; font-size: 12px; font-weight: 600; letter-spacing: .2px; }
 .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 5px rgba(108, 242, 191, .08), 0 0 14px rgba(108, 242, 191, .55); }
 
-main { width: min(1120px, calc(100% - 56px)); margin: 0 auto; }
-.hero { padding: 58px 8px 42px; display: flex; align-items: end; justify-content: space-between; gap: 40px; }
-.eyebrow { margin: 0 0 15px; color: var(--mint); font: 700 10px/1 "Segoe UI", sans-serif; letter-spacing: 3px; }
-h1 { margin: 0; font: 700 clamp(34px, 5vw, 57px)/1.07 "Segoe UI Variable Display", "Segoe UI", sans-serif; letter-spacing: -2.7px; }
-h1 em { color: var(--mint); font-style: normal; }
-.intro { max-width: 570px; margin: 20px 0 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
-.hero-stat { min-width: 126px; padding: 16px 20px; display: flex; align-items: center; gap: 13px; border-left: 1px solid rgba(108, 242, 191, .3); }
-.hero-stat > span { color: var(--mint); font: 700 40px/1 "Segoe UI", sans-serif; }
-.hero-stat p { margin: 0; color: #849892; font: 700 9px/1.55 "Segoe UI", sans-serif; letter-spacing: 1.5px; }
-
-.control-panel { border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(150deg, rgba(18, 37, 33, .88), rgba(9, 22, 19, .88)); box-shadow: 0 32px 80px rgba(0, 0, 0, .28); overflow: hidden; backdrop-filter: blur(18px); }
+main { width: min(1120px, calc(100% - 56px)); margin: 0 auto; padding-top: 34px; }
+.control-panel { border-radius: 10px; background: rgba(15, 31, 28, .82); overflow: hidden; }
 .panel-heading { min-height: 92px; padding: 22px 26px; display: flex; align-items: center; justify-content: space-between; gap: 25px; border-bottom: 1px solid var(--line); }
 .panel-heading h2 { margin: 0 0 4px; font: 700 18px/1.3 "Segoe UI", sans-serif; letter-spacing: -.4px; }
 .panel-heading p { margin: 0; color: var(--muted); font-size: 12px; }
@@ -63,12 +54,13 @@ h1 em { color: var(--mint); font-style: normal; }
 .spinning { animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.adapter-list { min-height: 255px; padding: 15px; display: grid; gap: 10px; }
-.adapter-card { min-height: 126px; padding: 20px; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; align-items: center; gap: 18px; border: 1px solid rgba(177, 218, 205, .1); border-radius: 14px; background: rgba(8, 20, 17, .58); transition: border-color .2s, transform .2s, background .2s; }
-.adapter-card:hover { transform: translateY(-1px); border-color: rgba(177, 218, 205, .2); background: rgba(12, 27, 23, .8); }
-.adapter-card.active { border-color: rgba(108, 242, 191, .3); background: linear-gradient(100deg, rgba(108, 242, 191, .075), rgba(8, 20, 17, .6) 55%); box-shadow: inset 3px 0 var(--mint); }
-.adapter-icon { width: 52px; height: 52px; display: grid; place-items: center; border: 1px solid rgba(160, 201, 188, .12); border-radius: 13px; background: rgba(7, 17, 14, .7); }
-.active .adapter-icon { border-color: rgba(108, 242, 191, .24); background: rgba(108, 242, 191, .08); }
+.adapter-list { min-height: 255px; padding: 0 26px; display: grid; gap: 0; }
+.adapter-card { min-height: 118px; padding: 18px 4px; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; align-items: center; gap: 18px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; transition: background .15s; }
+.adapter-card:last-child { border-bottom: 0; }
+.adapter-card:hover { background: rgba(255, 255, 255, .018); }
+.adapter-card.active { background: rgba(108, 242, 191, .025); }
+.adapter-icon { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid rgba(160, 201, 188, .12); border-radius: 8px; background: rgba(7, 17, 14, .45); }
+.active .adapter-icon { border-color: rgba(108, 242, 191, .2); background: rgba(108, 242, 191, .055); }
 .adapter-icon svg { width: 26px; fill: none; stroke: #79928a; stroke-width: 1.45; stroke-linecap: round; stroke-linejoin: round; }
 .active .adapter-icon svg { stroke: var(--mint); }
 .adapter-title { display: flex; align-items: center; gap: 12px; }
@@ -81,11 +73,11 @@ h1 em { color: var(--mint); font-style: normal; }
 .metadata { display: flex; align-items: center; gap: clamp(22px, 4vw, 55px); color: #c0cdca; font: 500 10px/1.2 "Segoe UI", sans-serif; }
 .metadata span { min-width: 82px; }
 .metadata small { margin-bottom: 4px; display: block; color: #5e716b; font-size: 7px; font-weight: 700; letter-spacing: 1.2px; }
-.switch-button { min-width: 100px; height: 40px; padding: 0 17px; border: 1px solid rgba(108, 242, 191, .25); border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 14px; color: var(--mint); background: rgba(108, 242, 191, .07); font-size: 11px; font-weight: 700; cursor: pointer; transition: .2s; }
+.switch-button { min-width: 90px; height: 38px; padding: 0 16px; border: 1px solid rgba(108, 242, 191, .25); border-radius: 7px; display: flex; justify-content: center; align-items: center; color: var(--mint); background: transparent; font-size: 11px; font-weight: 700; cursor: pointer; transition: .15s; }
 .switch-button:hover { color: #07110f; background: var(--mint); box-shadow: 0 8px 25px rgba(67, 221, 164, .18); }
 .switch-button.current { border-color: transparent; color: #60746e; background: transparent; cursor: default; }
 
-.alert { margin: 14px 15px 0; padding: 12px 15px; display: flex; align-items: center; gap: 12px; border-radius: 11px; font-size: 11px; }
+.alert { margin: 16px 26px 0; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-radius: 7px; font-size: 11px; }
 .alert > span { width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; }
 .alert strong { display: block; font-size: 12px; }
 .alert p { margin: 2px 0 0; opacity: .82; }
@@ -101,26 +93,13 @@ h1 em { color: var(--mint); font-style: normal; }
 .loader { width: 32px; height: 32px; border: 2px solid rgba(108, 242, 191, .12); border-top-color: var(--mint); border-radius: 50%; animation: spin .8s linear infinite; }
 
 footer { height: 66px; padding: 0 5px; display: flex; align-items: center; justify-content: space-between; color: #4f655e; font-size: 9px; letter-spacing: .5px; text-transform: uppercase; }
-.modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 25px; background: rgba(1, 7, 6, .76); backdrop-filter: blur(10px); animation: appear .16s ease-out; }
-@keyframes appear { from { opacity: 0; } }
-.modal { width: min(440px, 100%); padding: 34px; border: 1px solid rgba(108, 242, 191, .22); border-radius: 20px; background: linear-gradient(145deg, #132a25, #091714); box-shadow: 0 30px 90px #000; }
-.modal-icon { width: 48px; height: 48px; margin-bottom: 24px; display: grid; place-items: center; border: 1px solid rgba(108, 242, 191, .28); border-radius: 13px; color: var(--mint); background: rgba(108, 242, 191, .08); font-size: 22px; }
-.modal h2 { margin: 0 0 12px; font: 700 24px/1.3 "Segoe UI", sans-serif; }
-.modal > p:not(.eyebrow) { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
-.modal-actions { margin-top: 28px; display: flex; justify-content: flex-end; gap: 10px; }
-.modal-actions button { height: 42px; padding: 0 18px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
-.modal-actions button:disabled { opacity: .6; cursor: wait; }
-.secondary { border: 1px solid var(--line); background: rgba(255,255,255,.025); }
-.primary { border: 1px solid var(--mint); color: var(--ink); background: var(--mint); }
-
 @media (max-width: 760px) {
   .topbar { padding: 0 24px; }
   main { width: calc(100% - 28px); }
-  .hero { padding: 42px 4px 30px; }
-  .hero-stat { display: none; }
-  h1 { letter-spacing: -1.8px; }
+  main { padding-top: 20px; }
   .panel-heading { align-items: flex-start; flex-direction: column; }
   .tools, .search { width: 100%; }
+  .adapter-list { padding: 0 18px; }
   .adapter-card { grid-template-columns: 46px minmax(0, 1fr); }
   .adapter-icon { width: 44px; height: 44px; }
   .switch-button { grid-column: 1 / -1; width: 100%; }
