@@ -26,4 +26,4 @@ git push origin v0.1.0
 
 ## Development
 
-The UI uses Leptos compiled to WebAssembly and the native shell uses Tauri 2. Local development is optional; the GitHub workflow is the supported build path.
+The UI uses local HTML, CSS, and JavaScript while the privileged Windows backend uses Rust and Tauri 2. Local development is optional; the GitHub workflow is the supported build path.
