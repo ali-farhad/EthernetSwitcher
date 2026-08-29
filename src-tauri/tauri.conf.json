@@ -4,9 +4,7 @@
   "version": "0.1.0",
   "identifier": "com.alifarhad.win-ethernet-switcher",
   "build": {
-    "beforeDevCommand": "trunk serve",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "trunk build",
+    "beforeBuildCommand": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-frontend.ps1",
     "frontendDist": "../dist"
   },
   "app": {

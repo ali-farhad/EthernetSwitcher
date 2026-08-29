@@ -24,11 +24,6 @@ jobs:
         with:
           workspaces: './ -> target'
 
-      - name: Install Trunk
-        uses: taiki-e/install-action@v2
-        with:
-          tool: trunk
-
       - name: Build portable Windows executable
         uses: tauri-apps/tauri-action@v1
         with:
