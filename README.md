@@ -1,28 +1,41 @@
-# Ethernet Switcher
+# Ethernet Switcher for Windows
 
-A small Windows app for quickly changing between physical Ethernet adapters.
+A fast, lightweight Windows network adapter switcher. Enable one physical Ethernet connection and disable the others with a single click.
 
-![Ethernet Switcher](assets/ethernet-switcher.png)
+Useful if you regularly switch between built-in Ethernet, USB adapters, tethering devices, private networks, or multiple wired connections.
+
+![Ethernet Switcher for Windows](assets/ethernet-switcher.png)
+
+## Features
+
+- Quickly switch between physical Ethernet adapters
+- See connection status, IP address, link speed, and MAC address
+- Automatically disable other wired adapters when switching
+- Portable EXE and Windows installers available
+- Runs locally without sending network information anywhere
+- Clean interface with no setup or account required
 
 ## Download
 
-Open the [Releases](https://github.com/ali-farhad/EthernetSwitcher/releases) page and download one of these files:
+Download the latest version from [GitHub Releases](https://github.com/ali-farhad/EthernetSwitcher/releases):
 
-- `EthernetSwitcher-v1.0.0-Setup.exe` — normal Windows installer
-- `EthernetSwitcher-v1.0.0.exe` — portable version, no installation
+- `EthernetSwitcher-v1.0.0-Setup.exe` — standard Windows installer
+- `EthernetSwitcher-v1.0.0.exe` — portable app, no installation needed
 - `EthernetSwitcher-v1.0.0.msi` — MSI installer
 
-Windows asks for administrator permission because changing network adapters requires it. The files are not code-signed yet, so SmartScreen may show a warning.
+Windows asks for administrator permission because enabling and disabling network adapters requires it. The app is not code-signed yet, so Windows SmartScreen may show a warning.
 
-## Publish a release
+## How it works
 
-Commit and push your changes, then create and push a version tag:
+The interface is plain HTML, CSS, and JavaScript inside a small Tauri app. A Rust backend uses built-in Windows PowerShell network commands to find, enable, and disable physical Ethernet adapters.
+
+## Build a release
+
+Push a version tag and GitHub Actions will build the portable EXE, setup EXE, and MSI automatically:
 
 ```powershell
 git tag v1.0.0
 git push origin v1.0.0
 ```
-
-GitHub Actions builds the portable app and both installers. When the build finishes, they appear automatically under **Releases**.
 
 Made with 💖 by [alifarhad](https://github.com/ali-farhad).
