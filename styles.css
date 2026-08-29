@@ -18,6 +18,11 @@ body { margin: 0; min-width: 320px; min-height: 100vh; overflow-x: hidden; }
 button, input { font: inherit; }
 button { color: inherit; }
 
+.boot-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #eaf0ef; background: #07110f; }
+.boot-screen strong { font-size: 16px; }
+.boot-screen span { color: #91a6a0; font-size: 12px; }
+.boot-mark { width: 48px; height: 48px; margin-bottom: 8px; display: grid; place-items: center; border: 1px solid rgba(108, 242, 191, .38); border-radius: 13px; color: #6cf2bf; background: rgba(108, 242, 191, .09); font-weight: 700; }
+
 .app-shell { min-height: 100vh; position: relative; overflow: hidden; background: radial-gradient(circle at 72% -10%, #14352d 0, transparent 36%), linear-gradient(145deg, #091714, #07100e 64%); }
 .ambient { position: fixed; border-radius: 50%; filter: blur(1px); opacity: .45; pointer-events: none; }
 .ambient-one { width: 340px; height: 340px; right: -180px; top: 230px; background: radial-gradient(circle, rgba(85, 239, 183, .14), transparent 70%); }

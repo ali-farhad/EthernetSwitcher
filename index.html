@@ -10,5 +10,12 @@
     <link data-trunk rel="copy-dir" href="public" />
     <link data-trunk rel="rust" data-wasm-opt="z" />
   </head>
-  <body><noscript>Ethernet Switcher requires JavaScript to display its interface.</noscript></body>
+  <body>
+    <div id="boot-screen" class="boot-screen">
+      <div class="boot-mark">ES</div>
+      <strong>Starting Ethernet Switcher...</strong>
+      <span>If this message remains visible, the interface could not start.</span>
+    </div>
+    <noscript>Ethernet Switcher requires JavaScript to display its interface.</noscript>
+  </body>
 </html>
