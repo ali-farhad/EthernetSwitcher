@@ -24,27 +24,39 @@ jobs:
         with:
           workspaces: './ -> target'
 
-      - name: Build portable Windows executable
-        uses: tauri-apps/tauri-action@v1
-        with:
-          args: --no-bundle
+      - name: Read app version
+        shell: pwsh
+        run: |
+          $version = (Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json).version
+          "APP_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Prepare executable
+      - name: Build executable and installers
+        uses: tauri-apps/tauri-action@v1
+
+      - name: Prepare release files
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path artifacts -Force
-          Copy-Item -LiteralPath target/release/win-ethernet-switcher.exe -Destination artifacts/EthernetSwitcher.exe
+          $version = $env:APP_VERSION
+          Copy-Item -LiteralPath target/release/win-ethernet-switcher.exe -Destination "artifacts/EthernetSwitcher-v$version.exe"
+          $setup = Get-ChildItem -Path target/release/bundle/nsis -Filter *.exe | Select-Object -First 1
+          $msi = Get-ChildItem -Path target/release/bundle/msi -Filter *.msi | Select-Object -First 1
+          if (-not $setup) { throw "NSIS installer was not created" }
+          if (-not $msi) { throw "MSI installer was not created" }
+          Copy-Item -LiteralPath $setup.FullName -Destination "artifacts/EthernetSwitcher-v$version-Setup.exe"
+          Copy-Item -LiteralPath $msi.FullName -Destination "artifacts/EthernetSwitcher-v$version.msi"
 
-      - name: Upload executable
+      - name: Upload Windows files
         uses: actions/upload-artifact@v4
         with:
-          name: Ethernet-Switcher-Windows
-          path: artifacts/EthernetSwitcher.exe
+          name: Ethernet-Switcher-v${{ env.APP_VERSION }}-Windows
+          path: artifacts/*
           if-no-files-found: error
 
       - name: Publish tagged release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          name: Ethernet Switcher v${{ env.APP_VERSION }} by alifarhad
           generate_release_notes: true
-          files: artifacts/EthernetSwitcher.exe
+          files: artifacts/*
